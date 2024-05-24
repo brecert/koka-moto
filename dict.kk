@@ -27,17 +27,17 @@ pub fun update(d: dict<k, v>, key: k, onModify: (current: v) -> e maybe<v>, onIn
     Nil ->
       onInsert().maybe(Nil, fn(v) Cons((key, v), Nil))
 
-/// Add only if key is not present in the dict
-pub fun insert(d: dict<k, v>, key: k, value: v, ?(==): (k, k) -> e bool) : e dict<k, v>
-  d.update(key, fn(v) Just(v), value.const)
-
-/// Overwrite any existing key with value
-pub fun modify(d: dict<k, v>, key: k, value: v, ?(==): (k, k) -> e bool) : e dict<k, v>
-  d.update(key, fn(_) Just(value), Nothing.const) 
-
 /// Replace existing key or add one if it does not exist
 pub fun set(d: dict<k, v>, key: k, value: v, ?(==): (k, k) -> e bool) : e dict<k, v>
   d.update(key, value.const, value.const)
+
+/// Add only if key is not present in the dict
+pub fun set-if-empty(d: dict<k, v>, key: k, value: v, ?(==): (k, k) -> e bool) : e dict<k, v>
+  d.update(key, fn(v) Just(v), value.const)
+
+/// Overwrite any existing key with value
+pub fun set-if-exists(d: dict<k, v>, key: k, value: v, ?(==): (k, k) -> e bool) : e dict<k, v>
+  d.update(key, fn(_) Just(value), Nothing.const) 
 
 pub fun get(d: dict<k, v>, key: k, ?(==): (k, k) -> e bool) : e maybe<v>
   d.find(fn((k, _)) k == key).map(fn((_, v)) v)
