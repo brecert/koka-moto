@@ -16,8 +16,8 @@ fun test-sets()
   fun expect(a, b, ?(==))
     if a != b then throw("error")
 
-  set([1, 2, 3]).set/add-all(set([3, 4, 5])).set/list.expect([1, 2, 3, 4, 5])
-  set([1, 2, 3]).set/keep-shared(set([3, 4, 5])).set/list.expect([3])
-  set([1, 2, 3]).set/drop-all(set([3, 4, 5])).set/list.expect([1, 2])
-  set([1, 2, 3]).set/with-unique(set([3, 4, 5])).set/list.expect([1, 2, 4, 5])
+  set([1, 2, 3]).add-all(set([3, 4, 5])).expect([1, 2, 3, 4, 5])
+  set([1, 2, 3]).keep-shared(set([3, 4, 5])).expect([3])
+  set([1, 2, 3]).drop-all(set([3, 4, 5])).expect([1, 2])
+  set([1, 2, 3]).with-unique(set([3, 4, 5])).expect([1, 2, 4, 5])
 
