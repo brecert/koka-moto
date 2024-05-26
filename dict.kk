@@ -64,6 +64,9 @@ pub fun map(d: dict<k, v>, action: (k, v) -> e (k, v)) : e dict<k, v>
 
 // # Sets
 
+fun order(d1: dict<k, v>, d2: dict<k, v>) : e (smaller: dict<k, v>, larger: dict<k, v>)
+  if d1.length <= d2.length then (d1, d2) else (d2, d1)
+
 /// Merge all values from d2 into d1
 /// keyword: union
 pub fun add-all(d1: dict<k, v>, d2: dict<k, v>, ?(==): (k, k) -> e bool) : e dict<k, v>
@@ -71,32 +74,35 @@ pub fun add-all(d1: dict<k, v>, d2: dict<k, v>, ?(==): (k, k) -> e bool) : e dic
 
 /// Remove all values from d1 that are in d2
 /// keyword: set difference
-pub fun drop-all(d1: dict<k, v>, d2: dict<k, v>, (==): (k, k) -> e bool) : e dict<k, v>
+pub fun drop-all(d1: dict<k, v>, d2: dict<k, v>, ?(==): (k, k) -> e bool) : e dict<k, v>
   d1.drop-if fn(k, _) d2.has-key(k)
 
 /// Keep only the values that are in both d1 and d2
 /// both the key and the value must match to be kept
 /// keyword: intersection
 pub fun keep-shared(d1: dict<k, v>, d2: dict<k, v>, ?v/(==): (v, v) -> e bool, ?k/(==): (k, k) -> e bool) : e dict<k, v>
-  d2.walk(d1) fn(d, k2, v2) d.keep-if fn(k1, v1) v1 == v2 && k1 == k2
+  val (s, l) = order(d1, d2)
+  l.keep-if fn(k1, v1) s.get(k1).maybe(False, fn(v2) v1 == v2)
 
-/// Keep only the values that are not shared between d1 and d2
+/// Adds/keeps only the values that are not shared between d1 and d2
 /// both the key and the value must match to be exluded
 /// keyword: symmetric difference
-pub fun drop-shared(d1: dict<k, v>, d2: dict<k, v>, ?v/(==): (v, v) -> e bool, ?k/(==): (k, k) -> e bool) : e dict<k, v>
-  d2.walk(d1) fn(d, k2, v2) d.drop-if fn(k1, v1) v1 == v2 && k1 == k2
+pub fun with-unique(d1: dict<k, v>, d2: dict<k, v>, ?v/(==): (v, v) -> e bool, ?k/(==): (k, k) -> e bool) : e dict<k, v>
+  d1.add-all(d2).drop-all(d1.keep-shared(d2))
 
 /// Keep only the values that are in both d1 and d2
-/// only the key must match to be kept  
+/// only the key must match to be kept
 /// keyword: intersection
-pub fun keep-shared-keys(d1: dict<k, v>, d2: dict<k, v>, (==): (k, k) -> e bool) : e dict<k, v>
-  d1.keep-if fn(k, _) d2.has-key(k)
+pub fun keep-shared-keys(d1: dict<k, v>, d2: dict<k, v>, ?(==): (k, k) -> e bool) : e dict<k, v>
+  val (s, l) = order(d1, d2)
+  l.keep-if fn(k, _) s.has-key(k)
 
 /// Keep only the values that are not shared between d1 and d2
 /// only the key must match to be kept
 /// keyword: symmetric difference
-pub fun drop-shared-keys(d1: dict<k, v>, d2: dict<k, v>, (==): (k, k) -> e bool) : e dict<k, v>
-  d1.drop-if fn(k, _) d2.has-key(k)
+pub fun with-unique-keys(d1: dict<k, v>, d2: dict<k, v>, ?(==): (k, k) -> e bool) : e dict<k, v>
+  d1.add-all(d2).drop-all(d1.keep-shared-keys(d2))
+
 
 // nice to haves
 
