@@ -61,6 +61,14 @@ pub fun keep-shared(s1: set<a>, s2: set<a>, ?(==): (a, a) -> e bool) : e set<a>
 pub fun with-unique(s1: set<a>, s2: set<a>, ?(==): (a, a) -> e bool) : e set<a>
   s1.add-all(s2).drop-all(s1.keep-shared(s2))
 
+/// keyword: disjoint
+pub fun all-unique(s1: set<a>, s2: set<a>, ?(==): (a, a) -> e bool) : e bool
+  s1.all fn(v) !s2.has(v)
+
+/// Checks if s1's values are all contained in s2.
+pub fun subset(s1: set<a>, s2: set<a>, ?(==): (a, a) -> e bool) : e bool
+  s1.all fn(v) s2.has(v)
+
 // conversions / creations
 
 pub fun dict/set(d: dict<a, ()>) : set<a>
