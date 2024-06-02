@@ -61,7 +61,9 @@ pub fun keep-shared(s1: set<a>, s2: set<a>, ?(==): (a, a) -> e bool) : e set<a>
 pub fun with-unique(s1: set<a>, s2: set<a>, ?(==): (a, a) -> e bool) : e set<a>
   s1.add-all(s2).drop-all(s1.keep-shared(s2))
 
+/// Returns true if none of the values are are shared
 /// keyword: disjoint
+pub val none-shared = all-unique // alias
 pub fun all-unique(s1: set<a>, s2: set<a>, ?(==): (a, a) -> e bool) : e bool
   s1.all fn(v) !s2.has(v)
 
@@ -82,3 +84,13 @@ pub fun set/list(s: set<a>) : list<a>
 
 pub fun set/show(s: set<a>, ?show : (a) -> e string) : e string
   "(" ++ s.map(fn(x) x.show).join(", ") ++ ")"
+
+fun test-sets()
+  with return(_) println("success!")
+  fun expect(a, b, ?(==))
+    if a != b then throw("error")
+
+  set([1, 2, 3]).add-all(set([3, 4, 5])).expect([1, 2, 3, 4, 5])
+  set([1, 2, 3]).keep-shared(set([3, 4, 5])).expect([3])
+  set([1, 2, 3]).drop-all(set([3, 4, 5])).expect([1, 2])
+  set([1, 2, 3]).with-unique(set([3, 4, 5])).expect([1, 2, 4, 5])

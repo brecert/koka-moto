@@ -16,7 +16,7 @@ fun test-inside()
   log/info("hello world!")
   test-inside-nested()
 
-fun main()
+fun test()
   with basic-logging-print
   test-inside()
 

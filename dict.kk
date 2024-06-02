@@ -1,4 +1,5 @@
 import ext
+import test
 
 pub alias dict<k, v> = list<(key: k, value: v)>
 
@@ -123,3 +124,17 @@ pub fun has-value(d: dict<k, v>, value: v, ?(==): (v, v) -> e bool) : e bool
 
 pub fun list(d: dict<k, v>) : list<(k, v)>
   d
+
+fun test-dict-usage()
+  with test
+  dict([])
+    .set("cat", "meow")
+    .set-if-empty("bird", "tweet")
+    .set-if-exists("moth", "woof")
+    .set-if-empty("bird", "woof")
+    .set("wolf", "woof")
+    .set("wolf", "howl")
+    .set("dog", "meow")
+    .remove("dog")
+    .assert-eq([("cat","meow"),("bird","tweet"),("wolf","howl")])
+    
