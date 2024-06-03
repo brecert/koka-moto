@@ -42,6 +42,7 @@ pub fun while(seq, onEach)
     seq()
 
 // keyword: reduce
+// keyword: fold
 pub fun walk( seq : sequence<a,e>, state: s, onEach: (s,a) -> e s ) : e s
   with ctl yield(a)
     onEach(resume(()), a)
@@ -50,7 +51,7 @@ pub fun walk( seq : sequence<a,e>, state: s, onEach: (s,a) -> e s ) : e s
 
 
 // todo: better name?
-// todo: explicit typing..
+// todo: better, explicit typing and effect management..
 pub fun scan(seq, state, onEach)
   fn()
     val s = state.ref
@@ -68,6 +69,11 @@ pub fun limit(seq, amount)
         yield(a)
         resume(())
     seq()
+
+pub fun join( seq-a : sequence<_,_>, seq-b : sequence<_,_> ) : sequence<_,_>
+  fn()
+    seq-a.yield-all
+    seq-b.yield-all
 
 // additional functionality
 
