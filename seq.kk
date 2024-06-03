@@ -75,6 +75,14 @@ pub fun join( seq-a : sequence<_,_>, seq-b : sequence<_,_> ) : sequence<_,_>
     seq-a.yield-all
     seq-b.yield-all
 
+// todo: better name
+// keyword: product (?)
+pub fun combine(a, b)
+  fn()
+    handle a fun yield(a')
+      handle b fun yield(b')
+        yield((a', b'))
+
 // additional functionality
 
 pub fun list( seq : sequence<a,e> ) : e list<a>
@@ -126,3 +134,7 @@ fun test-walk()
 fun test-scan()
   with test
   [1, 2, 3, 4, 5].seq.scan(0, (+)).list.assert-eq([1, 3, 6, 10, 15])
+
+fun test-combine()
+  with test
+  [1, 2, 3].seq.combine(['a', 'b', 'c'].seq).list
