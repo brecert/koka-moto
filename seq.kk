@@ -137,4 +137,6 @@ fun test-scan()
 
 fun test-combine()
   with test
-  [1, 2, 3].seq.combine(['a', 'b', 'c'].seq).list
+  [1, 2, 3].seq.combine(['a', 'b'].seq).list.assert-eq
+    [(1,'a'),(1,'b'),(2,'a'),(2,'b'),(3,'a'),(3,'b')]
+  
