@@ -48,6 +48,17 @@ pub fun walk( seq : sequence<a,e>, state: s, onEach: (s,a) -> e s ) : e s
   seq()
   state
 
+
+// todo: better name?
+// todo: explicit typing..
+pub fun scan(seq, state, onEach)
+  fn()
+    val s = state.ref
+    with fun yield(a)
+      s := onEach(!s, a)
+      yield(!s)
+    seq()
+
 pub fun limit(seq, amount)
   fn()
     var i := 0
@@ -105,3 +116,7 @@ fun test-limit()
 fun test-walk()
   with test
   [1, 2, 3, 4].seq.walk(0, fn(a, b) a + b).assert-eq(10)
+
+fun test-scan()
+  with test
+  [1, 2, 3, 4, 5].seq.scan(0, (+)).list.assert-eq([1, 3, 6, 10, 15])
