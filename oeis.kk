@@ -19,7 +19,7 @@ pub fun a000045() : sequence<_,_>
 
 // utility for creating generalized fibonacci sequences
 inline fun n-acci(init : list<int>) : (() -> sequence<_,_>)
-  fn() init.seq.join(nats().scan(init, fn(list, _) list.tail ++ [list.sum]).map(head).map(unjust))
+  fn() init.seq.extend(nats().scan(init, fn(list, _) list.tail ++ [list.sum]).map(head).map(unjust))
 
 pub val a000073 = n-acci([0, 0, 1])
 pub val a000213 = n-acci([1, 1, 1])
