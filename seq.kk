@@ -49,6 +49,17 @@ pub fun foreach( seq : sequence<a,e>, onEach: (a) -> e () ) : e ()
     onEach(a)
   seq()
 
+
+// todo: renamed to "string"?
+// todo: generalized join using ?(++) and fold1?
+pub fun join( seq: sequence<string,e>) : e string
+  seq.walk("", fn(s, a) s ++ a)
+
+pub fun test-join()
+  with test
+  [].join.assert-eq("")
+  ["h", "e", "ll", "o"].join.assert-eq("hello")
+
 // todo: rename?
 // yield values until False is returned from onEach
 // keyword: drop-while
