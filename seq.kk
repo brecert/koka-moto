@@ -70,13 +70,35 @@ pub fun limit(seq, amount)
         resume(())
     seq()
 
-pub fun extend( seq-a : sequence<_,_>, seq-b : sequence<_,_> ) : sequence<_,_>
+pub fun all( seq : sequence<a,e>, predicate : (a) -> e bool ) : e bool
+  with ctl yield(a)
+    if !predicate(a) then False else resume(())
+  seq()
+  True
+
+fun test-all()
+  with test
+  [1, 2, 3, 4, 5].seq.all(fn(a) a < 6).assert-eq(True)
+  [1, 2, 3, 4, 5].seq.all(fn(a) a < 3).assert-eq(False)
+
+pub fun any( seq : sequence<a,e>, predicate : (a) -> e bool ) : e bool
+  with ctl yield(a)
+    if predicate(a) then True else resume(())
+  seq()
+  False
+
+fun test-any()
+  with test
+  [1, 2, 3, 4, 5].seq.any(fn(a) a < 3).assert-eq(True)
+  [1, 2, 3, 4, 5].seq.any(fn(a) a > 6).assert-eq(False)
+
+pub fun extend( seq-a : sequence<a,e>, seq-b : sequence<a,e> ) : sequence<a,e>
   fn()
     seq-a.yield-all
     seq-b.yield-all
 
 pub fun unzip( seq : sequence<(a, b),e> ) : e (sequence<a,e>, sequence<b,e>)
-  seq.seq/walk((seq/empty(), seq/empty())) fn((seq-a, seq-b), (a, b))
+  seq.walk((seq/empty(), seq/empty())) fn((seq-a, seq-b), (a, b))
     (a.single.extend(seq-a), b.single.extend(seq-b))
 
 fun test-unzip()
@@ -84,10 +106,10 @@ fun test-unzip()
   val (a, b) = [(1, 'a'), (2, 'b'), (3, 'c')].seq.unzip
   (a.list, b.list).assert-eq { ([1, 2, 3],['a', 'b', 'c']) }
 
-pub fun single( value : a ) : sequence<a,_>
+pub fun single( value : a ) : sequence<a,e>
   fn() yield(value)
 
-pub fun empty( ) : sequence<_, _>
+pub fun empty() : sequence<a,e>
   fn() ()
 
 // todo: better name
