@@ -92,6 +92,20 @@ fun test-any()
   [1, 2, 3, 4, 5].seq.any(fn(a) a < 3).assert-eq(True)
   [1, 2, 3, 4, 5].seq.any(fn(a) a > 6).assert-eq(False)
 
+pub fun skip(seq, n)
+  fn()  
+    var i := 0
+    with fun yield(value)
+      if i >= n then yield(value)
+      i := i + 1
+    seq()
+
+fun test-skip()
+  with test
+  [1, 2, 3, 4, 5].seq.skip(0).list.assert-eq([1, 2, 3, 4, 5])
+  [1, 2, 3, 4, 5].seq.skip(2).list.assert-eq([3, 4, 5])
+  [1, 2, 3, 4, 5].seq.skip(8).list.assert-eq([])
+
 pub fun extend( seq-a : sequence<a,e>, seq-b : sequence<a,e> ) : sequence<a,e>
   fn()
     seq-a.yield-all
