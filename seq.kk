@@ -15,6 +15,16 @@ pub fun loop(onEach)
     while { True }
       yield(onEach())
 
+// // todo: better name and types
+// fun generate(init: a, action: (a) -> a) : sequence<a,<div|e>>
+//   fn()
+//     var state := init
+//     while { True }
+//       state := action(state)
+
+// fun nats()
+//   generate(0, fn(a) a + 1)
+
 // seems like it could cause api surface problems
 // but here for those who need it
 // pub fun repeat(value)
@@ -48,7 +58,6 @@ pub fun foreach( seq : sequence<a,e>, onEach: (a) -> e () ) : e ()
   with fun yield(a)
     onEach(a)
   seq()
-
 
 // todo: renamed to "string"?
 // todo: generalized join using ?(++) and fold1?
@@ -129,6 +138,18 @@ pub fun skip(seq, n)
       if i >= n then yield(value)
       i := i + 1
     seq()
+
+pub fun with-index( seq : sequence<_,_> ) : sequence<_,_>
+  fn()
+    var i := 0
+    with fun yield(a)
+      i := i + 1
+      yield((i, a))
+    seq()
+
+fun test-with-index()
+  with test
+  ['a', 'b', 'c'].seq.with-index.list.assert-eq([(1, 'a'), (2, 'b'), (3, 'c')])
 
 fun test-skip()
   with test

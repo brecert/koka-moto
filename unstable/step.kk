@@ -34,6 +34,23 @@ fun seq/zip(a, b)
       (_, _) -> ()
   fn() yield-zipped(a.step, b.step)
 
+// pub fun walk( seq : sequence<a,e>, state: s, onEach: (s,a) -> e s ) : e s
+//   with ctl yield(a)
+//     onEach(resume(()), a)
+//   seq()
+//   state
+
+// todo: integrate this better wiht seq so we don't have to reimplement functions like this
+fun seq/walk1(a, onEach)
+  fun yield-walked((state, s : step<_,_>), onEach')
+    match s.next
+      Just((elem, rest)) -> yield-walked((onEach(state, elem), rest), onEach')
+      _ -> state
+  yield-walked(a.step.next.unjust, onEach)
+
+fun test-walk1()
+  [1, 2, 3, 4, 5].seq/seq.walk1(fn(s, a) s).assert-eq(1)
+
 fun test-zip()
   with test
   [1, 2, 3].seq
