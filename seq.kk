@@ -147,6 +147,17 @@ pub fun with-index( seq : sequence<_,_> ) : sequence<_,_>
       yield((i, a))
     seq()
 
+pub fun find( seq: sequence<a,e>, predicate: (a) -> e bool ) : e maybe<a>
+  with ctl yield(a)
+    if predicate(a) then Just(a) else resume(())
+  seq()
+  Nothing
+
+fun test-find()
+  with test
+  [].seq.find(fn(a) a > 3).assert-eq(Nothing)
+  [1, 2, 3, 4, 5].seq.find(fn(a) a > 3).assert-eq(Just(4))
+
 fun test-with-index()
   with test
   ['a', 'b', 'c'].seq.with-index.list.assert-eq([(1, 'a'), (2, 'b'), (3, 'c')])
