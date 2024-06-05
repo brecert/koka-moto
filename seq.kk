@@ -26,6 +26,16 @@ pub fun map(seq, onEach)
       yield(onEach(x))
     seq()
 
+pub fun flatmap(seq, onEach)
+  fn()
+    with fun yield(x)
+      onEach(x).seq/seq.yield-all
+    seq()
+
+fun test-flatmap()
+  with test
+  [1, 2, 3].seq.flatmap(fn(a) ['a', 'b']).list.assert-eq(['a', 'b', 'a', 'b', 'a', 'b'])
+
 pub fun foreach( seq : sequence<a,e>, onEach: (a) -> e () ) : e ()
   with fun yield(a)
     onEach(a)
