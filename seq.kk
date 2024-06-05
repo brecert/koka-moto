@@ -33,6 +33,7 @@ pub fun foreach( seq : sequence<a,e>, onEach: (a) -> e () ) : e ()
 
 // todo: rename?
 // yield values until False is returned from onEach
+// keyword: drop-while
 pub fun while(seq, onEach)
   fn()
     with ctl yield(value)
@@ -92,6 +93,7 @@ fun test-any()
   [1, 2, 3, 4, 5].seq.any(fn(a) a < 3).assert-eq(True)
   [1, 2, 3, 4, 5].seq.any(fn(a) a > 6).assert-eq(False)
 
+// keyword: drop
 pub fun skip(seq, n)
   fn()  
     var i := 0
@@ -105,6 +107,14 @@ fun test-skip()
   [1, 2, 3, 4, 5].seq.skip(0).list.assert-eq([1, 2, 3, 4, 5])
   [1, 2, 3, 4, 5].seq.skip(2).list.assert-eq([3, 4, 5])
   [1, 2, 3, 4, 5].seq.skip(8).list.assert-eq([])
+
+pub fun count( seq : sequence<a,e> ) : e int
+  seq.walk(0, fn(s, _) s + 1)
+
+fun test-count()
+  with test
+  [].seq.count.assert-eq(0)
+  [1, 2, 3, 4].seq.count.assert-eq(4)
 
 pub fun extend( seq-a : sequence<a,e>, seq-b : sequence<a,e> ) : sequence<a,e>
   fn()
