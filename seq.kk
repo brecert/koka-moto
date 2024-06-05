@@ -36,6 +36,14 @@ fun test-flatmap()
   with test
   [1, 2, 3].seq.flatmap(fn(a) ['a', 'b']).list.assert-eq(['a', 'b', 'a', 'b', 'a', 'b'])
 
+pub fun intersperse(seq, value)
+  seq.flatmap(fn(a) [value, a]).skip(1)
+
+fun test-intersperse()
+  with test
+  [].seq.intersperse(0).list.assert-eq([])
+  [1, 2, 3].seq.intersperse(0).list.assert-eq([1, 0, 2, 0, 3])
+
 pub fun foreach( seq : sequence<a,e>, onEach: (a) -> e () ) : e ()
   with fun yield(a)
     onEach(a)
@@ -59,7 +67,6 @@ pub fun walk( seq : sequence<a,e>, state: s, onEach: (s,a) -> e s ) : e s
     onEach(resume(()), a)
   seq()
   state
-
 
 // todo: better name?
 // todo: better, explicit typing and effect management..
